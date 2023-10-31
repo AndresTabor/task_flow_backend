@@ -20,6 +20,9 @@ public class Board {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private IsActive isActive = IsActive.ACTIVE;
+
     @OneToMany()
     @JoinColumn(name = "board_id")
     private List<Task> tasks;
