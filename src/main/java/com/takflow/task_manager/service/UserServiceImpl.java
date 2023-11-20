@@ -31,8 +31,11 @@ public class UserServiceImpl implements UserService {
         return UserMapper.INSTANCE.userToDto(userToUpdate);
     }
 
-    private UserDtoRequest validateUserAttributes(UserDtoRequest partialUser){
-
-        return null;
+    @Override
+    public UserDtoResponse getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow();
+        return UserMapper.INSTANCE.userToDto(user);
     }
+
+
 }

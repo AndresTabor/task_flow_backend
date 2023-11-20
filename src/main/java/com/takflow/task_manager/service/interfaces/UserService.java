@@ -7,4 +7,6 @@ public interface UserService {
     UserDtoResponse createUser(UserDtoRequest user);
 
     UserDtoResponse updateUser(UserDtoRequest partialUser, Long id);
+
+    UserDtoResponse getUserById(Long id);
 }

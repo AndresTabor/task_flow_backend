@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
-@RequestMapping("auht/user")
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -27,8 +27,17 @@ public class UserController {
     public ResponseEntity<UserDtoResponse> createUser(@Valid @RequestBody UserDtoRequest user){
         return new ResponseEntity<>(
                 userService.createUser(user),
+                HttpStatus.CREATED
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable Long id){
+        return new ResponseEntity<>(
+                userService.getUserById(id),
                 HttpStatus.OK
         );
+
     }
 
     @PatchMapping("/{id}")
