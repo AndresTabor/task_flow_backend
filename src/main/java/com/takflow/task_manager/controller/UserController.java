@@ -26,7 +26,16 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserDtoResponse> createUser(@Valid @RequestBody UserDtoRequest user){
         return new ResponseEntity<>(
-                userService.CreateUser(user),
+                userService.createUser(user),
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserDtoResponse> updateUser(
+            @RequestBody UserDtoRequest partialUser, @PathVariable Long id){
+        return new ResponseEntity<>(
+                userService.updateUser(partialUser, id),
                 HttpStatus.OK
         );
     }

@@ -2,7 +2,7 @@ package com.takflow.task_manager.dto.response;
 
 import com.takflow.task_manager.model.UserBoard;
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
@@ -23,4 +23,6 @@ public class UserDtoResponse {
     private String role;
 
     private List<UserBoard> boards;
+
+
 }
