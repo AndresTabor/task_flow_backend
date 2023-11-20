@@ -9,4 +9,6 @@ public interface UserService {
     UserDtoResponse updateUser(UserDtoRequest partialUser, Long id);
 
     UserDtoResponse getUserById(Long id);
+
+    void deleteUserById(Long id);
 }
