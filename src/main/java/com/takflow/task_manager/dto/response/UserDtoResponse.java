@@ -1,6 +1,6 @@
 package com.takflow.task_manager.dto.response;
 
-import com.takflow.task_manager.model.UserBoard;
+import com.takflow.task_manager.model.UserProject;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -22,7 +22,7 @@ public class UserDtoResponse {
     @NotBlank(message = "El rol es requerido")
     private String role;
 
-    private List<UserBoard> boards;
+    private List<UserProject> projects;
 
 
 }

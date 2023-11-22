@@ -4,11 +4,9 @@ import com.takflow.task_manager.model.enums.IsActive;
 import com.takflow.task_manager.model.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Data
@@ -36,7 +34,7 @@ public class User {
     @OneToMany
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private List<UserBoard> boards = new ArrayList<>();
+    private List<UserProject> projects = new ArrayList<>();
 
 
 }

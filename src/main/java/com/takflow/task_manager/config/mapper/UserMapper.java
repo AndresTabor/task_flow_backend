@@ -19,6 +19,9 @@ public interface UserMapper {
     @Mapping(target = "name", source = "name")
     User dtoToUser(UserDtoRequest userDto);
 
+    @Mapping(target = "name", source = "name")
+    User dtoToUser(UserDtoResponse userDtoResponse);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")
     void updateUser(UserDtoRequest userDto, @MappingTarget User user);
