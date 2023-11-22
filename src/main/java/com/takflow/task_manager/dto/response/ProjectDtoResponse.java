@@ -14,6 +14,9 @@ import java.util.List;
 
 @Data
 public class ProjectDtoResponse {
+    @NotNull
+    private Long id;
+
     @NotBlank(message = "El nombre es requerido")
     @Size(min = 1, max = 50)
     private String name;

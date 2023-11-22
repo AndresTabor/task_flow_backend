@@ -26,7 +26,7 @@ public class UserProjectServiceImpl implements UserProjectService {
         UserProject member = new UserProject();
         member.setProject(project);
         member.setUser(user);
-        member.setRol(role);
+        member.setMemberRol(role);
         return userProjectRepository.save(member);
     }
 

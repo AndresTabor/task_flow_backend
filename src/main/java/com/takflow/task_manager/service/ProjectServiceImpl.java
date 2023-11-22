@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
-
+    //TODO Implements ExceptionHandler
     @Autowired
     private ProjectRepository projectRepository;
 
@@ -42,9 +42,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project getProjectById(Long id) {
-        return null;
+    public ProjectDtoResponse getProjectById(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow();
+        return  ProjectMapper.INSTANCE.projectToDto(project);
     }
+
+
 
     @Override
     public List<ProjectDtoResponse> getAllProjects(Long userId) {

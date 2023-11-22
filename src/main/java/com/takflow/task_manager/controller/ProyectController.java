@@ -21,7 +21,7 @@ public class ProyectController {
 
     @PostMapping("/add-user")
     public ResponseEntity<HttpStatus> addMemberToProyect(@RequestBody long proyectId, long userId){
-
+        //TODO: Implement add member
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -32,5 +32,13 @@ public class ProyectController {
                 projectServiceImpl.createProject(projectDtoRequest)
                 ,HttpStatus.CREATED);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectDtoResponse> getProjectById(@PathVariable Long id){
+        return new ResponseEntity<>(
+                projectServiceImpl.getProjectById(id),
+                HttpStatus.OK);
+    }
+
 
 }

@@ -1,5 +1,7 @@
 package com.takflow.task_manager.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.takflow.task_manager.model.enums.IsActive;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,8 +27,10 @@ public class Project {
     @JoinColumn(name = "project_id")
     private List<Task> tasks = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
+    //@JsonBackReference
+    @JsonIgnoreProperties({"project"})
     private List<UserProject> members = new ArrayList<>();
 
 }
