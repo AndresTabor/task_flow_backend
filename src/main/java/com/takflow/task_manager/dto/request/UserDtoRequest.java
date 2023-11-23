@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 
 @Data
 public class UserDtoRequest {
@@ -22,5 +22,6 @@ public class UserDtoRequest {
     
     @NotBlank(message = "El rol es requerido")
     private String role;
+
 
 }

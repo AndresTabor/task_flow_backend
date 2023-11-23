@@ -1,13 +1,16 @@
 package com.takflow.task_manager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.takflow.task_manager.model.enums.MemberRol;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user_board")
-public class UserBoard {
+@Table(name = "user_project")
+//@JsonIgnoreProperties({"user", "project"})
+@JsonIgnoreProperties({"project"})
+public class UserProject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -18,9 +21,9 @@ public class UserBoard {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
 
-    private MemberRol rol = MemberRol.MEMBER;
+    private MemberRol memberRol = MemberRol.MEMBER;
 
 }

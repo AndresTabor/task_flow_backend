@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
-@RequestMapping("auht/user")
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -26,9 +26,33 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserDtoResponse> createUser(@Valid @RequestBody UserDtoRequest user){
         return new ResponseEntity<>(
-                userService.CreateUser(user),
+                userService.createUser(user),
+                HttpStatus.CREATED
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable Long id){
+        return new ResponseEntity<>(
+                userService.getUserById(id),
                 HttpStatus.OK
         );
+
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserDtoResponse> updateUser(
+            @RequestBody UserDtoRequest partialUser, @PathVariable Long id){
+        return new ResponseEntity<>(
+                userService.updateUser(partialUser, id),
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteUserById(@PathVariable Long id){
+        userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

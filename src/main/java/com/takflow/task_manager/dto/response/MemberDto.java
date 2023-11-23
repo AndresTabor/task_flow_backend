@@ -1,14 +1,14 @@
 package com.takflow.task_manager.dto.response;
 
 import com.takflow.task_manager.model.UserProject;
+import com.takflow.task_manager.model.enums.IsActive;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class UserDtoResponse {
-
+public class MemberDto {
     @NotEmpty(message = "El id es requerido")
     private Long id;
 
@@ -19,10 +19,8 @@ public class UserDtoResponse {
     @Email(message = "Formato de Email invalido")
     private String email;
 
-    @NotBlank(message = "El rol es requerido")
-    private String role;
-
-    private List<UserProject> projects;
+    @NotNull
+    private IsActive isActive;
 
 
 }
