@@ -1,8 +1,9 @@
 package com.takflow.task_manager.service.interfaces;
 
 import com.takflow.task_manager.dto.request.ProjectDtoRequest;
+
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
-import com.takflow.task_manager.model.Project;
+import com.takflow.task_manager.repository.ProjectSummaryProjection;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface ProjectService {
     void deleteProjectById(Long projectId);
 
     void deleteProjectsAsOwner();
+
+    List<ProjectSummaryProjection> getParticipatingProjects(Long id);
 }

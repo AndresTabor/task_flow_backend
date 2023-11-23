@@ -4,11 +4,13 @@ import com.takflow.task_manager.config.mapper.ProjectMapper;
 import com.takflow.task_manager.config.mapper.UserMapper;
 import com.takflow.task_manager.dto.request.ProjectDtoRequest;
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
+import com.takflow.task_manager.dto.response.ProjectSummaryDto;
 import com.takflow.task_manager.dto.response.UserDtoResponse;
 import com.takflow.task_manager.model.Project;
 import com.takflow.task_manager.model.User;
 import com.takflow.task_manager.model.enums.MemberRol;
 import com.takflow.task_manager.repository.ProjectRepository;
+import com.takflow.task_manager.repository.ProjectSummaryProjection;
 import com.takflow.task_manager.service.interfaces.ProjectService;
 import com.takflow.task_manager.service.interfaces.UserProjectService;
 import com.takflow.task_manager.service.interfaces.UserService;
@@ -32,7 +34,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public ProjectDtoResponse createProject(ProjectDtoRequest project) {
+    public com.takflow.task_manager.dto.response.ProjectDtoResponse createProject(ProjectDtoRequest project) {
         Project projectToCreate = ProjectMapper.INSTANCE.dtoToProject(project);
         Project newProject = projectRepository.save(projectToCreate);
         //Add Owner
@@ -42,7 +44,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDtoResponse getProjectById(Long id) {
+    public com.takflow.task_manager.dto.response.ProjectDtoResponse getProjectById(Long id) {
         Project project = projectRepository.findById(id).orElseThrow();
         return  ProjectMapper.INSTANCE.projectToDto(project);
     }
@@ -50,12 +52,12 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
-    public List<ProjectDtoResponse> getAllProjects(Long userId) {
+    public List<com.takflow.task_manager.dto.response.ProjectDtoResponse> getAllProjects(Long userId) {
         return null;
     }
 
     @Override
-    public List<ProjectDtoResponse> getProjectsAsOwner(Long ownerId) {
+    public List<com.takflow.task_manager.dto.response.ProjectDtoResponse> getProjectsAsOwner(Long ownerId) {
         return null;
     }
 
@@ -67,6 +69,18 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void deleteProjectsAsOwner() {
 
+    }
+
+    @Override
+    public List<ProjectSummaryProjection> getParticipatingProjects(Long id) {
+        return projectRepository.findParticipatingProjects(id);
+
+        //List<Project> projects = projectRepository.findProjectsByUserId(id);
+
+        /*return projects.stream()
+                .map(ProjectMapper.INSTANCE::projectToDto)
+                .toList();
+        return projects;*/
     }
 
     private User getOwner(Long ownerId){
