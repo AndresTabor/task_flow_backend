@@ -28,6 +28,6 @@ public class ProjectDtoResponse {
     private List<Task> tasks;
 
     @NotEmpty
-    private List<UserProject> members;
+    private List<UserProjectDtoResponse> members;
 
 }

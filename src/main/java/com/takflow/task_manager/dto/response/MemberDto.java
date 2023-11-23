@@ -1,10 +1,11 @@
 package com.takflow.task_manager.dto.response;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import com.takflow.task_manager.model.UserProject;
+import com.takflow.task_manager.model.enums.IsActive;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class MemberDto {
@@ -18,6 +19,8 @@ public class MemberDto {
     @Email(message = "Formato de Email invalido")
     private String email;
 
-    public MemberDto() {
-    }
+    @NotNull
+    private IsActive isActive;
+
+
 }
