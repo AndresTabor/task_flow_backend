@@ -14,11 +14,9 @@ public interface ProjectService {
 
     List<ProjectDtoResponse> getAllProjects(Long userId);
 
-    List<ProjectDtoResponse> getProjectsAsOwner(Long ownerId);
-
     void deleteProjectById(Long projectId);
 
-    void deleteProjectsAsOwner();
+    void deleteProjectsAsOwner(Long projectId,Long userId);
 
     List<ProjectSummaryProjection> getParticipatingProjects(Long id);
 }

@@ -28,7 +28,7 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<com.takflow.task_manager.dto.response.ProjectDtoResponse> createProject(@Valid @RequestBody ProjectDtoRequest projectDtoRequest){
+    public ResponseEntity<ProjectDtoResponse> createProject(@Valid @RequestBody ProjectDtoRequest projectDtoRequest){
 
         return new ResponseEntity<>(
                 projectServiceImpl.createProject(projectDtoRequest)
@@ -36,7 +36,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<com.takflow.task_manager.dto.response.ProjectDtoResponse> getProjectById(@PathVariable Long id){
+    public ResponseEntity<ProjectDtoResponse> getProjectById(@PathVariable Long id){
         return new ResponseEntity<>(
                 projectServiceImpl.getProjectById(id),
                 HttpStatus.OK);
@@ -48,5 +48,17 @@ public class ProjectController {
                 projectServiceImpl.getParticipatingProjects(id),
                 HttpStatus.OK);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<HttpStatus> deleteProjectsAsOwner(@PathVariable Long id){
+        projectServiceImpl.deleteProjectById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @DeleteMapping("{ownerId}/{projectId}")
+    public ResponseEntity<HttpStatus> deleteProjectsAsOwner(@PathVariable Long ownerId, @PathVariable Long projectId){
+        projectServiceImpl.deleteProjectsAsOwner(projectId,ownerId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 }

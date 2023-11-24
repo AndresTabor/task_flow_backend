@@ -4,10 +4,11 @@ import com.takflow.task_manager.config.mapper.ProjectMapper;
 import com.takflow.task_manager.config.mapper.UserMapper;
 import com.takflow.task_manager.dto.request.ProjectDtoRequest;
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
-import com.takflow.task_manager.dto.response.ProjectSummaryDto;
 import com.takflow.task_manager.dto.response.UserDtoResponse;
 import com.takflow.task_manager.model.Project;
 import com.takflow.task_manager.model.User;
+import com.takflow.task_manager.model.UserProject;
+import com.takflow.task_manager.model.enums.IsActive;
 import com.takflow.task_manager.model.enums.MemberRol;
 import com.takflow.task_manager.repository.ProjectRepository;
 import com.takflow.task_manager.repository.ProjectSummaryProjection;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -34,7 +36,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public com.takflow.task_manager.dto.response.ProjectDtoResponse createProject(ProjectDtoRequest project) {
+    public ProjectDtoResponse createProject(ProjectDtoRequest project) {
         Project projectToCreate = ProjectMapper.INSTANCE.dtoToProject(project);
         Project newProject = projectRepository.save(projectToCreate);
         //Add Owner
@@ -43,8 +45,9 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectMapper.INSTANCE.projectToDto(newProject);
     }
 
+    //TODO: Implement Security Admin
     @Override
-    public com.takflow.task_manager.dto.response.ProjectDtoResponse getProjectById(Long id) {
+    public ProjectDtoResponse getProjectById(Long id) {
         Project project = projectRepository.findById(id).orElseThrow();
         return  ProjectMapper.INSTANCE.projectToDto(project);
     }
@@ -52,35 +55,37 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
-    public List<com.takflow.task_manager.dto.response.ProjectDtoResponse> getAllProjects(Long userId) {
+    public List<ProjectDtoResponse> getAllProjects(Long userId) {
         return null;
     }
 
-    @Override
-    public List<com.takflow.task_manager.dto.response.ProjectDtoResponse> getProjectsAsOwner(Long ownerId) {
-        return null;
-    }
-
+    //TODO: Implement Security Admin
     @Override
     public void deleteProjectById(Long projectId) {
-
+        Project project = projectRepository.findById(projectId).orElseThrow();
+        project.setIsActive(IsActive.DISABLED);
     }
-
+    @Transactional
     @Override
-    public void deleteProjectsAsOwner() {
+    public void deleteProjectsAsOwner(Long projectId,Long userId) {
+        Project project = projectRepository.findById(projectId).orElseThrow();
+        UserProject member = project.getMembers()
+                .stream()
+                .filter(userProject -> userProject.getUser().getId().equals(userId))
+                .findFirst()
+                .orElseThrow();
 
+        MemberRol role = member.getMemberRol();
+
+        if (role != MemberRol.OWNER){
+            throw new RuntimeException("No tienes los permisos para eliminar el proyecto");
+        }
+        project.setIsActive(IsActive.DISABLED);
     }
 
     @Override
     public List<ProjectSummaryProjection> getParticipatingProjects(Long id) {
         return projectRepository.findParticipatingProjects(id);
-
-        //List<Project> projects = projectRepository.findProjectsByUserId(id);
-
-        /*return projects.stream()
-                .map(ProjectMapper.INSTANCE::projectToDto)
-                .toList();
-        return projects;*/
     }
 
     private User getOwner(Long ownerId){
