@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @Service
@@ -74,7 +75,8 @@ public class ProjectServiceImpl implements ProjectService {
                 new NoSuchElementException("Project not found")
         );
 
-        if(!isOwner(userId, project)){
+        Optional<UserProject> member = getUserProject(userId, project);
+        if(!isOwner(member)){
             throw new AccessDeniedException("You do not have the permissions to perform this action");
         }
         project.setIsActive(IsActive.DISABLED);
@@ -86,13 +88,22 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectSummaryProjection> getParticipatingProjects(Long id) {
         return projectRepository.findParticipatingProjects(id);
     }
+
     @Transactional
     @Override
     public ProjectDtoResponse addMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException {
         Project project = projectRepository.findById(projectId).orElseThrow();
-        if(!isOwner(ownerId, project)){
+
+        Optional<UserProject> owner = getUserProject(ownerId, project);
+        if(!isOwner(owner)){
             throw new AccessDeniedException("You do not have the permissions to perform this action");
         }
+
+        Optional<UserProject> memberIsPresent = getUserProject(memberId, project);
+        if (memberIsPresent.isPresent()){
+            throw new AccessDeniedException("The member has already been added");
+        }
+
         User memberToAdd = getMember(memberId);
         userProjectService.addMemberToProject(project,memberToAdd,MemberRol.MEMBER);
         return ProjectMapper.INSTANCE.projectToDto(project);
@@ -103,17 +114,15 @@ public class ProjectServiceImpl implements ProjectService {
         return UserMapper.INSTANCE.dtoToUser(member);
     }
 
-    private boolean isOwner(Long userId, Project project) throws AccessDeniedException {
-        UserProject member = project.getMembers()
+    private boolean isOwner(Optional<UserProject> member) {
+        return member.filter(userProject -> userProject.getMemberRol() == MemberRol.OWNER).isPresent();
+    }
+
+    private Optional<UserProject> getUserProject(Long userId, Project project) {
+        return project.getMembers()
                 .stream()
                 .filter(userProject -> userProject.getUser().getId().equals(userId))
-                .findFirst()
-                .orElseThrow(() ->
-                        new AccessDeniedException("You do not have the permissions to perform this action")
-                );
-
-        MemberRol role = member.getMemberRol();
-        return role == MemberRol.OWNER;
+                .findFirst();
 
     }
 }
