@@ -5,6 +5,7 @@ import com.takflow.task_manager.dto.request.ProjectDtoRequest;
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
 import com.takflow.task_manager.repository.ProjectSummaryProjection;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 public interface ProjectService {
@@ -16,7 +17,9 @@ public interface ProjectService {
 
     void deleteProjectById(Long projectId);
 
-    void deleteProjectsAsOwner(Long projectId,Long userId);
+    void deleteProjectsAsOwner(Long projectId,Long userId) throws AccessDeniedException;
 
     List<ProjectSummaryProjection> getParticipatingProjects(Long id);
+
+    ProjectDtoResponse addMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException;
 }

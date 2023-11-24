@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -55,9 +56,19 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("{ownerId}/{projectId}")
-    public ResponseEntity<HttpStatus> deleteProjectsAsOwner(@PathVariable Long ownerId, @PathVariable Long projectId){
+    public ResponseEntity<HttpStatus> deleteProjectsAsOwner(@PathVariable Long ownerId, @PathVariable Long projectId) throws AccessDeniedException {
         projectServiceImpl.deleteProjectsAsOwner(projectId,ownerId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/add/member/{projectId}/{memberId}/{ownerId}")
+    public ResponseEntity<ProjectDtoResponse> addMemberToProject(
+            @PathVariable Long projectId, @PathVariable Long memberId,@PathVariable Long ownerId) throws AccessDeniedException {
+        //Long projectId, Long memberId, Long ownerId
+
+        return new ResponseEntity<>(
+                projectServiceImpl.addMember(projectId,memberId,ownerId),
+                HttpStatus.OK);
     }
 
 

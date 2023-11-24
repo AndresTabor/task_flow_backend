@@ -19,8 +19,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
+
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -40,7 +42,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project projectToCreate = ProjectMapper.INSTANCE.dtoToProject(project);
         Project newProject = projectRepository.save(projectToCreate);
         //Add Owner
-        User owner = getOwner(project.getOwnerId());
+        User owner = getMember(project.getOwnerId());
         userProjectService.addMemberToProject(newProject,owner,MemberRol.OWNER);
         return ProjectMapper.INSTANCE.projectToDto(newProject);
     }
@@ -53,7 +55,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
 
-
+    //TODO: Implement Security Admin
     @Override
     public List<ProjectDtoResponse> getAllProjects(Long userId) {
         return null;
@@ -67,29 +69,51 @@ public class ProjectServiceImpl implements ProjectService {
     }
     @Transactional
     @Override
-    public void deleteProjectsAsOwner(Long projectId,Long userId) {
-        Project project = projectRepository.findById(projectId).orElseThrow();
-        UserProject member = project.getMembers()
-                .stream()
-                .filter(userProject -> userProject.getUser().getId().equals(userId))
-                .findFirst()
-                .orElseThrow();
+    public void deleteProjectsAsOwner(Long projectId,Long userId) throws AccessDeniedException {
+        Project project = projectRepository.findById(projectId).orElseThrow(() ->
+                new NoSuchElementException("Project not found")
+        );
 
-        MemberRol role = member.getMemberRol();
-
-        if (role != MemberRol.OWNER){
-            throw new RuntimeException("No tienes los permisos para eliminar el proyecto");
+        if(!isOwner(userId, project)){
+            throw new AccessDeniedException("You do not have the permissions to perform this action");
         }
         project.setIsActive(IsActive.DISABLED);
     }
+
+
 
     @Override
     public List<ProjectSummaryProjection> getParticipatingProjects(Long id) {
         return projectRepository.findParticipatingProjects(id);
     }
+    @Transactional
+    @Override
+    public ProjectDtoResponse addMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException {
+        Project project = projectRepository.findById(projectId).orElseThrow();
+        if(!isOwner(ownerId, project)){
+            throw new AccessDeniedException("You do not have the permissions to perform this action");
+        }
+        User memberToAdd = getMember(memberId);
+        userProjectService.addMemberToProject(project,memberToAdd,MemberRol.MEMBER);
+        return ProjectMapper.INSTANCE.projectToDto(project);
+    }
 
-    private User getOwner(Long ownerId){
-        UserDtoResponse getOwner = userService.getUserById(ownerId);
-        return UserMapper.INSTANCE.dtoToUser(getOwner);
+    private User getMember(Long memberId){
+        UserDtoResponse member = userService.getUserById(memberId);
+        return UserMapper.INSTANCE.dtoToUser(member);
+    }
+
+    private boolean isOwner(Long userId, Project project) throws AccessDeniedException {
+        UserProject member = project.getMembers()
+                .stream()
+                .filter(userProject -> userProject.getUser().getId().equals(userId))
+                .findFirst()
+                .orElseThrow(() ->
+                        new AccessDeniedException("You do not have the permissions to perform this action")
+                );
+
+        MemberRol role = member.getMemberRol();
+        return role == MemberRol.OWNER;
+
     }
 }
