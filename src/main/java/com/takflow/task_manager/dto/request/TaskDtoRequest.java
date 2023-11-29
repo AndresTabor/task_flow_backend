@@ -30,8 +30,10 @@ public class TaskDtoRequest {
     private Timestamp createdAt = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull(message = "La fecha de vencimiento de la tarea no puede esta vacía")
-
     @Pattern(regexp = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]",
     message = "La fecha debe cumplir con el el formato yyyy-mm-dd hh:mm:ss ")
     private String dueDate;
+
+    @NotNull(message = "Se requiere el id del proyecto")
+    private Long projectId;
 }

@@ -6,6 +6,7 @@ import com.takflow.task_manager.dto.request.ProjectDtoRequest;
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
 import com.takflow.task_manager.dto.response.UserDtoResponse;
 import com.takflow.task_manager.model.Project;
+import com.takflow.task_manager.model.Task;
 import com.takflow.task_manager.model.User;
 import com.takflow.task_manager.model.UserProject;
 import com.takflow.task_manager.model.enums.IsActive;
@@ -107,6 +108,15 @@ public class ProjectServiceImpl implements ProjectService {
         User memberToAdd = getMember(memberId);
         userProjectService.addMemberToProject(project,memberToAdd,MemberRol.MEMBER);
         return ProjectMapper.INSTANCE.projectToDto(project);
+    }
+    @Transactional
+    @Override
+    public void addTaskToProject(Long projectId, Task task) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() ->
+                new NoSuchElementException("El proyecto no se encuentra")
+        );
+
+        project.getTasks().add(task);
     }
 
     private User getMember(Long memberId){
