@@ -2,6 +2,7 @@ package com.takflow.task_manager.controller;
 
 import com.takflow.task_manager.dto.request.TaskDtoRequest;
 import com.takflow.task_manager.dto.response.TaskDtoResponse;
+import com.takflow.task_manager.model.Task;
 import com.takflow.task_manager.service.TaskServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,12 @@ public class TaskController {
     @PostMapping("/new")
     public ResponseEntity<TaskDtoResponse> createTaks(@RequestBody TaskDtoRequest newTask){
         return new ResponseEntity<>(taskService.createTask(newTask),
+                HttpStatus.CREATED);
+    }
+
+    @PostMapping("assing")
+    public ResponseEntity<Task> assignMember(){
+        return new ResponseEntity<>(taskService.assignMember(1L,1L,2L),
                 HttpStatus.CREATED);
     }
 }

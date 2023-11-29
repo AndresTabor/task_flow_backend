@@ -29,4 +29,8 @@ public class Task {
     @Column(name = "due_date")
     private Timestamp dueDate;
 
+    @ManyToOne
+    @JoinColumn(name = "assigned_member_id")
+    private User assignedMember;
+
 }
