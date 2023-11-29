@@ -8,7 +8,6 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "user_project")
-//@JsonIgnoreProperties({"user", "project"})
 @JsonIgnoreProperties({"project"})
 public class UserProject {
     @Id

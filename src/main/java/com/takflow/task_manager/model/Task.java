@@ -4,7 +4,6 @@ import com.takflow.task_manager.model.enums.TaskState;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 

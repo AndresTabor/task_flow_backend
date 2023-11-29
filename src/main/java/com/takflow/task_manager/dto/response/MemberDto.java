@@ -1,11 +1,11 @@
 package com.takflow.task_manager.dto.response;
 
-import com.takflow.task_manager.model.UserProject;
+
 import com.takflow.task_manager.model.enums.IsActive;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.util.List;
+
 
 @Data
 public class MemberDto {

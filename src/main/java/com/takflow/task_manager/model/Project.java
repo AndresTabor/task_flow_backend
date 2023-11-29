@@ -23,7 +23,7 @@ public class Project {
     @Column(nullable = false)
     private IsActive isActive = IsActive.ACTIVE;
 
-    @OneToMany()
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_id")
     private List<Task> tasks = new ArrayList<>();
 
@@ -32,5 +32,6 @@ public class Project {
     //@JsonBackReference
     @JsonIgnoreProperties({"project"})
     private List<UserProject> members = new ArrayList<>();
+
 
 }

@@ -1,6 +1,5 @@
 package com.takflow.task_manager.dto.response;
 
-import com.takflow.task_manager.model.User;
 import com.takflow.task_manager.model.enums.MemberRol;
 import lombok.Data;
 import lombok.NonNull;
