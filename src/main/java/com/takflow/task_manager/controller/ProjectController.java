@@ -71,5 +71,13 @@ public class ProjectController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ProjectDtoResponse>> getAllProject(){
+        return new ResponseEntity<>(
+                projectServiceImpl.getAllProjects(),
+                HttpStatus.OK
+        );
+    }
+
 
 }

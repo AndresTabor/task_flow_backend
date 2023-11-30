@@ -14,7 +14,7 @@ public interface ProjectService {
 
     ProjectDtoResponse getProjectById(Long id);
 
-    List<ProjectDtoResponse> getAllProjects(Long userId);
+    List<ProjectDtoResponse> getAllProjects();
 
     void deleteProjectById(Long projectId);
 

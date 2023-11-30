@@ -6,6 +6,7 @@ import com.takflow.task_manager.dto.request.TaskDtoRequest;
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
 import com.takflow.task_manager.dto.response.TaskDtoResponse;
 import com.takflow.task_manager.dto.response.UserProjectDtoResponse;
+import com.takflow.task_manager.exception.EntityNotFoundException;
 import com.takflow.task_manager.model.Task;
 import com.takflow.task_manager.model.User;
 import com.takflow.task_manager.model.enums.TaskState;
@@ -18,9 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -33,6 +33,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private UserService userService;
+
+    public static final String TASK_NOT_FOUND = "Task not found with ID: ";
 
     @Override
     public TaskDtoResponse createTask(TaskDtoRequest newTask) {
@@ -51,10 +53,12 @@ public class TaskServiceImpl implements TaskService {
 
 
         if (memberToAssign.isEmpty()){
-            throw new NoSuchElementException("El usuario no se encuentra asignado al proyecto");
+            throw new EntityNotFoundException("The member must be assigned to the project");
         }
 
-        Task task = taskRepository.findById(taskId).orElseThrow();
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() ->  new EntityNotFoundException(TASK_NOT_FOUND + taskId));
+
         User userToAssign = UserMapper.INSTANCE.dtoToUser(userService.getUserById(userId));
         task.setAssignedMember(userToAssign);
         task.setState(TaskState.ASSIGNED);
@@ -65,7 +69,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDtoResponse getTaskById(Long taskId) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new NoSuchElementException("La tarea no se encuentra"));
+                .orElseThrow(() -> new EntityNotFoundException(TASK_NOT_FOUND + taskId));
         return TaskMapper.INSTANCE.taskToDto(task);
     }
 
@@ -90,7 +94,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void deleteTask(Long taskId) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new NoSuchElementException("La tarea no se encuentra"));
+                .orElseThrow(() ->  new EntityNotFoundException(TASK_NOT_FOUND + taskId));
         taskRepository.delete(task);
     }
 }
