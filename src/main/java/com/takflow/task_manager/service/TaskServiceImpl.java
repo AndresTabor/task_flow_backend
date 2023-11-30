@@ -77,7 +77,14 @@ public class TaskServiceImpl implements TaskService {
                 .map(TaskMapper.INSTANCE::taskToDto)
                 .toList();
     }
-
+    //TODO: Implement security Admin
+    @Override
+    public List<TaskDtoResponse> getAllTask() {
+         List<Task> tasks = taskRepository.findAll();
+        return tasks.stream()
+                .map(TaskMapper.INSTANCE::taskToDto)
+                .toList();
+    }
 
 
     @Override

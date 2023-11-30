@@ -3,7 +3,6 @@ package com.takflow.task_manager.controller;
 import com.takflow.task_manager.dto.request.AssignMemberDto;
 import com.takflow.task_manager.dto.request.TaskDtoRequest;
 import com.takflow.task_manager.dto.response.TaskDtoResponse;
-import com.takflow.task_manager.repository.TaskRepository;
 import com.takflow.task_manager.service.TaskServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,7 @@ public class TaskController {
 
     @Autowired
     private TaskServiceImpl taskService;
-    @Autowired
-    private TaskRepository taskRepository;
+
 
     @PostMapping("/new")
     public ResponseEntity<TaskDtoResponse> createTaks(@Valid @RequestBody TaskDtoRequest newTask){
@@ -40,6 +38,11 @@ public class TaskController {
     @GetMapping("{id}")
     public ResponseEntity<TaskDtoResponse> getTaskById(@PathVariable Long id){
         return new ResponseEntity<>(taskService.getTaskById(id),HttpStatus.OK);
+    }
+
+    @GetMapping("all")
+    public ResponseEntity<List<TaskDtoResponse>> getAllTask(){
+        return new ResponseEntity<>(taskService.getAllTask(),HttpStatus.OK);
     }
 
     @GetMapping("/my-tasks/{id}")
