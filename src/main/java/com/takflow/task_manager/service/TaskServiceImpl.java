@@ -1,27 +1,22 @@
 package com.takflow.task_manager.service;
 
-import com.takflow.task_manager.config.mapper.ProjectMapper;
 import com.takflow.task_manager.config.mapper.TaskMapper;
 import com.takflow.task_manager.config.mapper.UserMapper;
 import com.takflow.task_manager.dto.request.TaskDtoRequest;
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
 import com.takflow.task_manager.dto.response.TaskDtoResponse;
-import com.takflow.task_manager.dto.response.UserDtoResponse;
 import com.takflow.task_manager.dto.response.UserProjectDtoResponse;
-import com.takflow.task_manager.model.Project;
 import com.takflow.task_manager.model.Task;
 import com.takflow.task_manager.model.User;
-import com.takflow.task_manager.model.UserProject;
 import com.takflow.task_manager.model.enums.TaskState;
 import com.takflow.task_manager.repository.TaskRepository;
 import com.takflow.task_manager.service.interfaces.ProjectService;
 import com.takflow.task_manager.service.interfaces.TaskService;
 import com.takflow.task_manager.service.interfaces.UserService;
-import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -63,5 +58,19 @@ public class TaskServiceImpl implements TaskService {
         task.setState(TaskState.ASSIGNED);
         return TaskMapper.INSTANCE.taskToDto(taskRepository.save(task));
 
+    }
+
+    @Override
+    public TaskDtoResponse getTaskById(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new NoSuchElementException("La tarea no se encuentra"));
+        return TaskMapper.INSTANCE.taskToDto(task);
+    }
+
+    @Override
+    public void deleteTask(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new NoSuchElementException("La tarea no se encuentra"));
+        taskRepository.delete(task);
     }
 }
