@@ -1,5 +1,6 @@
 package com.takflow.task_manager.controller;
 
+import com.takflow.task_manager.dto.request.AssignMemberDto;
 import com.takflow.task_manager.dto.request.TaskDtoRequest;
 import com.takflow.task_manager.dto.response.TaskDtoResponse;
 import com.takflow.task_manager.model.Task;
@@ -26,8 +27,9 @@ public class TaskController {
     }
 
     @PostMapping("assing")
-    public ResponseEntity<Task> assignMember(){
-        return new ResponseEntity<>(taskService.assignMember(1L,1L,2L),
+    public ResponseEntity<TaskDtoResponse> assignMember(@RequestBody AssignMemberDto assignMemberDto){
+        return new ResponseEntity<>(taskService.assignMember(
+                assignMemberDto.getProjectId(),assignMemberDto.getTaskId(),assignMemberDto.getMemberId()),
                 HttpStatus.CREATED);
     }
 }

@@ -12,6 +12,7 @@ import com.takflow.task_manager.model.Project;
 import com.takflow.task_manager.model.Task;
 import com.takflow.task_manager.model.User;
 import com.takflow.task_manager.model.UserProject;
+import com.takflow.task_manager.model.enums.TaskState;
 import com.takflow.task_manager.repository.TaskRepository;
 import com.takflow.task_manager.service.interfaces.ProjectService;
 import com.takflow.task_manager.service.interfaces.TaskService;
@@ -43,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
         return TaskMapper.INSTANCE.taskToDto(taskRepository.save(task));
     }
 
-    public Task assignMember(Long projectId,Long taskId, Long userId){
+    public TaskDtoResponse assignMember(Long projectId,Long taskId, Long userId){
         ProjectDtoResponse project = projectService.getProjectById(projectId);
 
         Optional<UserProjectDtoResponse> memberToAssign = project.getMembers()
@@ -59,7 +60,8 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(taskId).orElseThrow();
         User userToAssign = UserMapper.INSTANCE.dtoToUser(userService.getUserById(userId));
         task.setAssignedMember(userToAssign);
+        task.setState(TaskState.ASSIGNED);
+        return TaskMapper.INSTANCE.taskToDto(taskRepository.save(task));
 
-        return taskRepository.save(task);
     }
 }
