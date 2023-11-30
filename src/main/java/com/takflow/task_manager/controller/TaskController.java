@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Validated
 @RequestMapping("/task")
@@ -38,6 +40,11 @@ public class TaskController {
     @GetMapping("{id}")
     public ResponseEntity<TaskDtoResponse> getTaskById(@PathVariable Long id){
         return new ResponseEntity<>(taskService.getTaskById(id),HttpStatus.OK);
+    }
+
+    @GetMapping("/my-tasks/{id}")
+    public ResponseEntity<List<TaskDtoResponse>> getTasksAssigned(@PathVariable Long id){
+        return new ResponseEntity<>(taskService.getTasksAssigned(id),HttpStatus.OK);
     }
 
 

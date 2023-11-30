@@ -3,12 +3,11 @@ package com.takflow.task_manager.dto.response;
 import com.takflow.task_manager.model.enums.TaskState;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+
 
 @Data
 public class TaskDtoResponse {

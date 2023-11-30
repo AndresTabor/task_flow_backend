@@ -17,8 +17,10 @@ import com.takflow.task_manager.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -66,6 +68,17 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new NoSuchElementException("La tarea no se encuentra"));
         return TaskMapper.INSTANCE.taskToDto(task);
     }
+
+    @Override
+    public List<TaskDtoResponse> getTasksAssigned(Long userId) {
+        List<Task> tasks = taskRepository.getTasksAssigned(userId);
+
+        return tasks.stream()
+                .map(TaskMapper.INSTANCE::taskToDto)
+                .toList();
+    }
+
+
 
     @Override
     public void deleteTask(Long taskId) {
