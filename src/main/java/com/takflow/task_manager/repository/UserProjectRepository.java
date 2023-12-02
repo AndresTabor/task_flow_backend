@@ -16,6 +16,4 @@ public interface UserProjectRepository extends JpaRepository<UserProject,Long> {
     @Query("SELECT u FROM UserProject u where u.user.id = :userId AND u.project.id = :projectId")
     Optional<UserProject> getMemberById(Long userId, Long projectId);
 
-    /*@Query("SELECT u FROM UserProject u where u.user.id = :userId AND u.project.id = :projectId")
-    Optional<UserProject> getMemberById(Long userId, Long projectId);*/
 }

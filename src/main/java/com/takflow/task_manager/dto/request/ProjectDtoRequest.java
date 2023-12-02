@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,7 +19,7 @@ public class ProjectDtoRequest {
     @Size(min = 1, max = 50)
     private String name;
 
-    private List<User> members;
+    private List<User> members = new ArrayList<>();
 
     public ProjectDtoRequest() {
     }

@@ -23,7 +23,7 @@ public class TaskController {
 
 
     @PostMapping("/new")
-    public ResponseEntity<TaskDtoResponse> createTaks(@Valid @RequestBody TaskDtoRequest newTask){
+    public ResponseEntity<TaskDtoResponse> createTask(@Valid @RequestBody TaskDtoRequest newTask){
         return new ResponseEntity<>(taskService.createTask(newTask),
                 HttpStatus.CREATED);
     }

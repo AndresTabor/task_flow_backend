@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     public static final String PROJECT_NOT_FOUND = "Project not found with ID: ";
 
-    public static final String ACCESDENIED = "You do not have the permissions to perform this action";
+    public static final String ACCESS_DENIED = "You do not have the permissions to perform this action";
 
     @Transactional
     @Override
@@ -86,7 +87,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         MemberRol userRole = userProjectService.getRoleInProject(userId,projectId);
         if (userRole != MemberRol.OWNER){
-            throw new AccessDeniedException(ACCESDENIED);
+            throw new AccessDeniedException(ACCESS_DENIED);
         }
         project.setIsActive(IsActive.DISABLED);
     }
@@ -104,7 +105,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         MemberRol userRole = userProjectService.getRoleInProject(ownerId,projectId);
         if (userRole != MemberRol.OWNER){
-            throw new AccessDeniedException(ACCESDENIED);
+            throw new AccessDeniedException(ACCESS_DENIED);
         }
 
         Optional<UserProject> memberIsPresent = getUserProject(memberId, project);
@@ -124,7 +125,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         MemberRol userRole = userProjectService.getRoleInProject(ownerId,projectId);
         if (userRole != MemberRol.OWNER){
-            throw new AccessDeniedException(ACCESDENIED);
+            throw new AccessDeniedException(ACCESS_DENIED);
         }
 
         userProjectService.removeMemberToProject(memberId,projectId);
@@ -143,10 +144,6 @@ public class ProjectServiceImpl implements ProjectService {
     private User getMember(Long memberId){
         UserDtoResponse member = userService.getUserById(memberId);
         return UserMapper.INSTANCE.dtoToUser(member);
-    }
-
-    private boolean isOwner(Optional<UserProject> member) {
-        return member.filter(userProject -> userProject.getMemberRol() == MemberRol.OWNER).isPresent();
     }
 
     private Optional<UserProject> getUserProject(Long userId, Project project) {
