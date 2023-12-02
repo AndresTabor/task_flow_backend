@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class AssignMemberDto {
+public class AssignTaskDto {
     @NotNull(message = "El id del proyecto es requerido")
     private Long projectId;
     @NotNull(message = "El id de la tarea es requerida")

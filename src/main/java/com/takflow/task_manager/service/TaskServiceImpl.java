@@ -46,13 +46,13 @@ public class TaskServiceImpl implements TaskService {
     public TaskDtoResponse assignMember(Long projectId,Long taskId, Long userId){
         ProjectDtoResponse project = projectService.getProjectById(projectId);
 
-        Optional<UserProjectDtoResponse> memberToAssign = project.getMembers()
+        Optional<UserProjectDtoResponse> isMemberInProject = project.getMembers()
                 .stream()
                 .filter(userProject -> userProject.getUser().getId().equals(userId))
                 .findFirst();
 
 
-        if (memberToAssign.isEmpty()){
+        if (isMemberInProject.isEmpty()){
             throw new EntityNotFoundException("The member must be assigned to the project");
         }
 

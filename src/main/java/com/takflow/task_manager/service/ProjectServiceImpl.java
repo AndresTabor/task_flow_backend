@@ -40,6 +40,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     public static final String PROJECT_NOT_FOUND = "Project not found with ID: ";
 
+    public static final String ACCESDENIED = "You do not have the permissions to perform this action";
+
     @Transactional
     @Override
     public ProjectDtoResponse createProject(ProjectDtoRequest project) {
@@ -82,10 +84,9 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
 
-        Optional<UserProject> member = getUserProject(userId, project);
-
-        if(!isOwner(member)){
-            throw new AccessDeniedException("You do not have the permissions to perform this action");
+        MemberRol userRole = userProjectService.getRoleInProject(userId,projectId);
+        if (userRole != MemberRol.OWNER){
+            throw new AccessDeniedException(ACCESDENIED);
         }
         project.setIsActive(IsActive.DISABLED);
     }
@@ -101,9 +102,9 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
 
-        Optional<UserProject> owner = getUserProject(ownerId, project);
-        if(!isOwner(owner)){
-            throw new AccessDeniedException("You do not have the permissions to perform this action");
+        MemberRol userRole = userProjectService.getRoleInProject(ownerId,projectId);
+        if (userRole != MemberRol.OWNER){
+            throw new AccessDeniedException(ACCESDENIED);
         }
 
         Optional<UserProject> memberIsPresent = getUserProject(memberId, project);
@@ -115,6 +116,21 @@ public class ProjectServiceImpl implements ProjectService {
         userProjectService.addMemberToProject(project,memberToAdd,MemberRol.MEMBER);
         return ProjectMapper.INSTANCE.projectToDto(project);
     }
+    @Transactional
+    @Override
+    public ProjectDtoResponse removeMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
+
+        MemberRol userRole = userProjectService.getRoleInProject(ownerId,projectId);
+        if (userRole != MemberRol.OWNER){
+            throw new AccessDeniedException(ACCESDENIED);
+        }
+
+        userProjectService.removeMemberToProject(memberId,projectId);
+        return ProjectMapper.INSTANCE.projectToDto(project);
+    }
+
     @Transactional
     @Override
     public void addTaskToProject(Long projectId, Task task) {

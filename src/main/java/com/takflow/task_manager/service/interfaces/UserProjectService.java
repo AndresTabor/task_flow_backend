@@ -11,8 +11,11 @@ public interface UserProjectService {
     UserProject addMemberToProject(Project project, User user, MemberRol role);
 
     List<UserProject> getMembersProject();
+    UserProject getMemberById(Long userId, Long projectId);
 
-    void deleteMemberProject();
+    MemberRol getRoleInProject(Long userId, Long projectId);
+
+    void removeMemberToProject(Long userId, Long projectId);
 
 
 }

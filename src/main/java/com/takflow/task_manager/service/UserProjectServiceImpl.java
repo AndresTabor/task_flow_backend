@@ -1,6 +1,7 @@
 package com.takflow.task_manager.service;
 
 import com.takflow.task_manager.dto.response.UserDtoResponse;
+import com.takflow.task_manager.exception.EntityNotFoundException;
 import com.takflow.task_manager.model.Project;
 import com.takflow.task_manager.model.User;
 import com.takflow.task_manager.model.UserProject;
@@ -27,6 +28,7 @@ public class UserProjectServiceImpl implements UserProjectService {
         member.setProject(project);
         member.setUser(user);
         member.setMemberRol(role);
+        project.getMembers().add(member);
         return userProjectRepository.save(member);
     }
 
@@ -36,7 +38,21 @@ public class UserProjectServiceImpl implements UserProjectService {
     }
 
     @Override
-    public void deleteMemberProject() {
+    public UserProject getMemberById(Long userId,Long projectId ) {
+        return userProjectRepository.getMemberById(userId,projectId)
+                .orElseThrow(() -> new EntityNotFoundException("The member is not found"));
+    }
 
+    @Override
+    public MemberRol getRoleInProject(Long userId, Long projectId){
+
+        return userProjectRepository.getRole(userId,projectId);
+    }
+
+    @Override
+    public void removeMemberToProject(Long userId, Long projectId) {
+        UserProject userToRemove = userProjectRepository.getMemberById(userId,projectId)
+                .orElseThrow(() -> new EntityNotFoundException("The member is not found"));
+        userProjectRepository.delete(userToRemove);
     }
 }

@@ -24,5 +24,7 @@ public interface ProjectService {
 
     ProjectDtoResponse addMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException;
 
+    ProjectDtoResponse removeMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException;
+
     void addTaskToProject(Long projectId, Task task);
 }
