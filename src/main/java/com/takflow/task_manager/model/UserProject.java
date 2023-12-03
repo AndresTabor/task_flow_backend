@@ -1,5 +1,6 @@
 package com.takflow.task_manager.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.takflow.task_manager.model.enums.MemberRol;
 import jakarta.persistence.*;

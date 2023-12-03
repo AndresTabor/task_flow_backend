@@ -14,7 +14,7 @@ public interface ProjectService {
 
     ProjectDtoResponse getProjectById(Long id);
 
-    List<ProjectDtoResponse> getAllProjects(Long userId);
+    List<ProjectDtoResponse> getAllProjects();
 
     void deleteProjectById(Long projectId);
 
@@ -23,6 +23,8 @@ public interface ProjectService {
     List<ProjectSummaryProjection> getParticipatingProjects(Long id);
 
     ProjectDtoResponse addMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException;
+
+    ProjectDtoResponse removeMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException;
 
     void addTaskToProject(Long projectId, Task task);
 }

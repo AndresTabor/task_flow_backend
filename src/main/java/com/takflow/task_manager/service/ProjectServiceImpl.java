@@ -5,6 +5,7 @@ import com.takflow.task_manager.config.mapper.UserMapper;
 import com.takflow.task_manager.dto.request.ProjectDtoRequest;
 import com.takflow.task_manager.dto.response.ProjectDtoResponse;
 import com.takflow.task_manager.dto.response.UserDtoResponse;
+import com.takflow.task_manager.exception.EntityNotFoundException;
 import com.takflow.task_manager.model.Project;
 import com.takflow.task_manager.model.Task;
 import com.takflow.task_manager.model.User;
@@ -21,14 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
-    //TODO Implements ExceptionHandler
+
     @Autowired
     private ProjectRepository projectRepository;
 
@@ -37,6 +38,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserService userService;
+
+    public static final String PROJECT_NOT_FOUND = "Project not found with ID: ";
+
+    public static final String ACCESS_DENIED = "You do not have the permissions to perform this action";
 
     @Transactional
     @Override
@@ -52,38 +57,40 @@ public class ProjectServiceImpl implements ProjectService {
     //TODO: Implement Security Admin
     @Override
     public ProjectDtoResponse getProjectById(Long id) {
-        Project project = projectRepository.findById(id).orElseThrow();
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + id));
         return  ProjectMapper.INSTANCE.projectToDto(project);
     }
 
 
     //TODO: Implement Security Admin
     @Override
-    public List<ProjectDtoResponse> getAllProjects(Long userId) {
-        return null;
+    public List<ProjectDtoResponse> getAllProjects() {
+        List<Project> projects = projectRepository.findAll();
+        return projects.stream()
+                .map(ProjectMapper.INSTANCE::projectToDto)
+                .toList();
     }
 
     //TODO: Implement Security Admin
     @Override
     public void deleteProjectById(Long projectId) {
-        Project project = projectRepository.findById(projectId).orElseThrow();
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
         project.setIsActive(IsActive.DISABLED);
     }
     @Transactional
     @Override
     public void deleteProjectsAsOwner(Long projectId,Long userId) throws AccessDeniedException {
-        Project project = projectRepository.findById(projectId).orElseThrow(() ->
-                new NoSuchElementException("Project not found")
-        );
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
 
-        Optional<UserProject> member = getUserProject(userId, project);
-        if(!isOwner(member)){
-            throw new AccessDeniedException("You do not have the permissions to perform this action");
+        MemberRol userRole = userProjectService.getRoleInProject(userId,projectId);
+        if (userRole != MemberRol.OWNER){
+            throw new AccessDeniedException(ACCESS_DENIED);
         }
         project.setIsActive(IsActive.DISABLED);
     }
-
-
 
     @Override
     public List<ProjectSummaryProjection> getParticipatingProjects(Long id) {
@@ -93,11 +100,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     @Override
     public ProjectDtoResponse addMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException {
-        Project project = projectRepository.findById(projectId).orElseThrow();
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
 
-        Optional<UserProject> owner = getUserProject(ownerId, project);
-        if(!isOwner(owner)){
-            throw new AccessDeniedException("You do not have the permissions to perform this action");
+        MemberRol userRole = userProjectService.getRoleInProject(ownerId,projectId);
+        if (userRole != MemberRol.OWNER){
+            throw new AccessDeniedException(ACCESS_DENIED);
         }
 
         Optional<UserProject> memberIsPresent = getUserProject(memberId, project);
@@ -111,10 +119,24 @@ public class ProjectServiceImpl implements ProjectService {
     }
     @Transactional
     @Override
+    public ProjectDtoResponse removeMember(Long projectId, Long memberId, Long ownerId) throws AccessDeniedException {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
+
+        MemberRol userRole = userProjectService.getRoleInProject(ownerId,projectId);
+        if (userRole != MemberRol.OWNER){
+            throw new AccessDeniedException(ACCESS_DENIED);
+        }
+
+        userProjectService.removeMemberToProject(memberId,projectId);
+        return ProjectMapper.INSTANCE.projectToDto(project);
+    }
+
+    @Transactional
+    @Override
     public void addTaskToProject(Long projectId, Task task) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() ->
-                new NoSuchElementException("El proyecto no se encuentra")
-        );
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND + projectId));
 
         project.getTasks().add(task);
     }
@@ -122,10 +144,6 @@ public class ProjectServiceImpl implements ProjectService {
     private User getMember(Long memberId){
         UserDtoResponse member = userService.getUserById(memberId);
         return UserMapper.INSTANCE.dtoToUser(member);
-    }
-
-    private boolean isOwner(Optional<UserProject> member) {
-        return member.filter(userProject -> userProject.getMemberRol() == MemberRol.OWNER).isPresent();
     }
 
     private Optional<UserProject> getUserProject(Long userId, Project project) {

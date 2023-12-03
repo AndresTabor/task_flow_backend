@@ -22,12 +22,6 @@ public class ProjectController {
     @Autowired
     private ProjectServiceImpl projectServiceImpl;
 
-    @PostMapping("/add-user")
-    public ResponseEntity<HttpStatus> addMemberToProyect(@RequestBody long proyectId, long userId){
-        //TODO: Implement add member
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PostMapping("/create")
     public ResponseEntity<ProjectDtoResponse> createProject(@Valid @RequestBody ProjectDtoRequest projectDtoRequest){
 
@@ -43,11 +37,12 @@ public class ProjectController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/all/{id}")
-    public ResponseEntity<List<ProjectSummaryProjection>> getParticipatingProjects(@PathVariable Long id){
+    @GetMapping("/all")
+    public ResponseEntity<List<ProjectDtoResponse>> getAllProject(){
         return new ResponseEntity<>(
-                projectServiceImpl.getParticipatingProjects(id),
-                HttpStatus.OK);
+                projectServiceImpl.getAllProjects(),
+                HttpStatus.OK
+        );
     }
 
     @DeleteMapping("{id}")
@@ -61,6 +56,13 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<ProjectSummaryProjection>> getParticipatingProjects(@PathVariable Long id){
+        return new ResponseEntity<>(
+                projectServiceImpl.getParticipatingProjects(id),
+                HttpStatus.OK);
+    }
+
     @PostMapping("/add/member/{projectId}/{memberId}/{ownerId}")
     public ResponseEntity<ProjectDtoResponse> addMemberToProject(
             @PathVariable Long projectId, @PathVariable Long memberId,@PathVariable Long ownerId) throws AccessDeniedException {
@@ -70,6 +72,22 @@ public class ProjectController {
                 projectServiceImpl.addMember(projectId,memberId,ownerId),
                 HttpStatus.OK);
     }
+
+    @DeleteMapping("/remove/{projectId}/{memberId}/{ownerId}")
+    public ResponseEntity<ProjectDtoResponse> removeMember(
+            @PathVariable Long projectId, @PathVariable Long memberId,@PathVariable Long ownerId) throws AccessDeniedException {
+        return new ResponseEntity<>(
+                projectServiceImpl.removeMember(projectId,memberId,ownerId),
+                HttpStatus.OK);
+    }
+
+
+
+
+
+
+
+
 
 
 }
